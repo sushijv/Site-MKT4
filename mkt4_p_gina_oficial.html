@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MKT4 - O passado e o futuro se encontram aqui</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="4.svg">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        mkt: {
+                            dark: '#0a0a0a',
+                            purple: '#8b5cf6',
+                            red: '#ef4444',
+                            orange: '#f97316',
+                            blue: '#3b82f6'
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-mkt': 'linear-gradient(to right, #8b5cf6, #ef4444, #f97316)',
+                        'gradient-mkt-full': 'linear-gradient(to right, #8b5cf6, #ef4444, #f97316, #3b82f6)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { filter: 'drop-shadow(0 0 15px rgba(139, 92, 246, 0.4))' },
+                            '50%': { filter: 'drop-shadow(0 0 30px rgba(249, 115, 22, 0.6))' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Model Viewer para arquivos 3D (.GLB) -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+    <style>
+        /* Correção para evitar quebras de tela no celular */
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism utils */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #8b5cf6, #ef4444, #f97316, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Ambient Background Glow */
+        .bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(10,10,10,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Scroll Reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8b5cf6;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans relative overflow-x-hidden w-full">
+
+    <!-- Ambient Glows -->
+    <div class="bg-glow top-[-100px] left-[-200px] max-w-[100vw]"></div>
+    <div class="bg-glow bottom-[20%] right-[-200px] max-w-[100vw]" style="background: radial-gradient(circle, rgba(249,115,22,0.1) 0%, rgba(10,10,10,0) 70%);"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass border-b-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <img src="MKT4.svg" alt="MKT4 Logo" class="h-12 w-auto" onerror="this.src='https://placehold.co/100x100/8b5cf6/fff?text=MKT4'">
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#sobre" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">O Evento</a>
+                    <a href="#dinamica" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Legacy & Arena</a>
+                    <a href="#numeros" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Visibilidade</a>
+                    <a href="#patrocinio" class="px-5 py-2.5 rounded-full text-sm font-semibold bg-gradient-mkt text-white hover:opacity-90 transition-opacity shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+                        Seja um Patrocinador
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none p-2">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-2xl border-b border-white/10 shadow-2xl transition-all duration-300">
+            <div class="px-6 pt-4 pb-8 space-y-6 flex flex-col">
+                <a href="#sobre" class="mobile-link block text-lg font-medium text-gray-300 hover:text-white">O Evento</a>
+                <a href="#dinamica" class="mobile-link block text-lg font-medium text-gray-300 hover:text-white">Legacy & Arena</a>
+                <a href="#numeros" class="mobile-link block text-lg font-medium text-gray-300 hover:text-white">Visibilidade</a>
+                <a href="#patrocinio" class="mobile-link block text-lg font-medium text-mkt-orange hover:text-white mt-4 border border-mkt-orange/30 p-3 rounded-lg text-center bg-mkt-orange/10">Seja um Patrocinador</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-12 px-4 sm:px-6 lg:px-8 w-full">
+        <div class="relative z-10 text-center max-w-5xl mx-auto w-full">
+            <!-- Animated Main Logo -->
+            <div class="mb-8 flex justify-center animate-float">
+                <img src="SHOWCASE.svg" alt="MKT4 Showcase" class="w-[280px] md:w-[450px] lg:w-[600px] h-auto animate-pulse-glow object-contain" onerror="this.src='https://placehold.co/600x200/111/fff?text=SHOWCASE'">
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl lg:text-7xl font-display font-bold tracking-tight mb-6 reveal">
+                O maior espetáculo de <br class="hidden md:block" /> 
+                <span class="text-gradient">estratégia e impacto real.</span>
+            </h1>
+            
+            <p class="mt-4 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed reveal" style="transition-delay: 100ms;">
+                A maior experiência imersiva corporativa da ESAMC Uberlândia.
+            </p>
+            
+            <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center reveal" style="transition-delay: 200ms;">
+                <a href="#sobre" class="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-semibold border border-white/20 glass hover:bg-white/10 transition-all text-white text-center">
+                    Entenda o Evento
+                </a>
+                <a href="#patrocinio" class="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-semibold bg-white text-black hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)] text-center">
+                    Seja um Patrocinador
+                </a>
+            </div>
+        </div>
+        
+        <!-- Scroll Down Indicator -->
+        <div class="relative w-full flex justify-center pointer-events-none mt-16">
+            <div class="flex flex-col items-center animate-bounce opacity-50">
+                <span class="text-xs tracking-widest uppercase mb-2">Role para baixo</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: O Ecossistema -->
+    <section id="sobre" class="py-24 relative z-10 border-t border-white/5 bg-black/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">O ápice de uma <span class="text-gradient">jornada</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    O MKT4 consolida anos de trajetória. Sendo a última etapa da trilha de marketing da ESAMC, o que sempre foi uma apresentação tradicional agora é uma simulação em escala real de um grande evento empresarial.
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-16 items-center w-full">
+                <!-- Imagem Trilha de Marketing -->
+                <div class="w-full max-w-4xl mx-auto reveal flex justify-center">
+                    <img src="trilha de mkt.png" alt="Trilha de Marketing" class="w-full h-auto object-contain drop-shadow-[0_0_30px_rgba(249,115,22,0.15)] hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/1000x400/111/fff?text=Trilha+de+Marketing'">
+                </div>
+
+                <!-- Barra Multidisciplinaridade -->
+                <div class="glass p-6 md:p-8 rounded-[2rem] reveal border border-white/10 w-full" style="transition-delay: 200ms;">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-display font-bold mb-3">Força <span class="text-mkt-blue">Multidisciplinar</span></h3>
+                        <p class="text-gray-400 text-sm max-w-3xl mx-auto">
+                            Projetos desenvolvidos por mentes diversas. O evento integra brilhantes alunos de diversos cursos, garantindo entregas 360º de altíssimo nível profissional.
+                        </p>
+                    </div>
+                    
+                    <!-- Barra de Cursos (Vertical no mobile, Horizontal no desktop) -->
+                    <div class="flex flex-col lg:flex-row w-full justify-between gap-3 lg:gap-2">
+                        <!-- Amarelo: Jornalismo -->
+                        <div class="flex-1 flex flex-row lg:flex-col items-center justify-start lg:justify-center p-3 lg:p-4 rounded-2xl border border-[#ffb534]/30 bg-[#ffb534]/5 hover:bg-[#ffb534]/20 transition-all duration-300 group cursor-default">
+                            <model-viewer src="jornalismo.glb" auto-rotate auto-rotate-delay="0" rotation-per-second="20deg" interaction-prompt="none" shadow-intensity="1" class="w-12 h-12 lg:w-16 lg:h-16 lg:mb-3 mr-4 lg:mr-0 group-hover:-translate-y-2 transition-transform duration-300 bg-transparent"></model-viewer>
+                            <span class="text-sm lg:text-xs font-semibold text-[#ffb534] text-left lg:text-center leading-tight">Jornalismo</span>
+                        </div>
+                        
+                        <!-- Laranja: Relações Internacionais -->
+                        <div class="flex-1 flex flex-row lg:flex-col items-center justify-start lg:justify-center p-3 lg:p-4 rounded-2xl border border-[#f68120]/30 bg-[#f68120]/5 hover:bg-[#f68120]/20 transition-all duration-300 group cursor-default">
+                            <model-viewer src="ri.glb" auto-rotate auto-rotate-delay="0" rotation-per-second="20deg" interaction-prompt="none" shadow-intensity="1" class="w-12 h-12 lg:w-16 lg:h-16 lg:mb-3 mr-4 lg:mr-0 group-hover:-translate-y-2 transition-transform duration-300 bg-transparent"></model-viewer>
+                            <span class="text-sm lg:text-xs font-semibold text-[#f68120] text-left lg:text-center leading-tight">Relações<br class="hidden lg:block"> Internacionais</span>
+                        </div>
+
+                        <!-- Vermelho: Publicidade e Propaganda -->
+                        <div class="flex-1 flex flex-row lg:flex-col items-center justify-start lg:justify-center p-3 lg:p-4 rounded-2xl border border-[#f30e04]/30 bg-[#f30e04]/5 hover:bg-[#f30e04]/20 transition-all duration-300 group cursor-default">
+                            <model-viewer src="pp.glb" auto-rotate auto-rotate-delay="0" rotation-per-second="20deg" interaction-prompt="none" shadow-intensity="1" class="w-12 h-12 lg:w-16 lg:h-16 lg:mb-3 mr-4 lg:mr-0 group-hover:-translate-y-2 transition-transform duration-300 bg-transparent"></model-viewer>
+                            <span class="text-sm lg:text-xs font-semibold text-[#f30e04] text-left lg:text-center leading-tight">Publicidade e<br class="hidden lg:block"> Propaganda</span>
+                        </div>
+
+                        <!-- Rosa: Design Gráfico -->
+                        <div class="flex-1 flex flex-row lg:flex-col items-center justify-start lg:justify-center p-3 lg:p-4 rounded-2xl border border-[#e70d8f]/30 bg-[#e70d8f]/5 hover:bg-[#e70d8f]/20 transition-all duration-300 group cursor-default">
+                            <model-viewer src="design-grafico.glb" auto-rotate auto-rotate-delay="0" rotation-per-second="20deg" interaction-prompt="none" shadow-intensity="1" class="w-12 h-12 lg:w-16 lg:h-16 lg:mb-3 mr-4 lg:mr-0 group-hover:-translate-y-2 transition-transform duration-300 bg-transparent"></model-viewer>
+                            <span class="text-sm lg:text-xs font-semibold text-[#e70d8f] text-left lg:text-center leading-tight">Design<br class="hidden lg:block"> Gráfico</span>
+                        </div>
+
+                        <!-- Roxo: Design de Moda -->
+                        <div class="flex-1 flex flex-row lg:flex-col items-center justify-start lg:justify-center p-3 lg:p-4 rounded-2xl border border-[#ac0ec2]/30 bg-[#ac0ec2]/5 hover:bg-[#ac0ec2]/20 transition-all duration-300 group cursor-default">
+                            <model-viewer src="design-moda.glb" auto-rotate auto-rotate-delay="0" rotation-per-second="20deg" interaction-prompt="none" shadow-intensity="1" class="w-12 h-12 lg:w-16 lg:h-16 lg:mb-3 mr-4 lg:mr-0 group-hover:-translate-y-2 transition-transform duration-300 bg-transparent"></model-viewer>
+                            <span class="text-sm lg:text-xs font-semibold text-[#ac0ec2] text-left lg:text-center leading-tight">Design<br class="hidden lg:block"> de Moda</span>
+                        </div>
+
+                        <!-- Azul: Administração -->
+                        <div class="flex-1 flex flex-row lg:flex-col items-center justify-start lg:justify-center p-3 lg:p-4 rounded-2xl border border-[#5627e0]/30 bg-[#5627e0]/5 hover:bg-[#5627e0]/20 transition-all duration-300 group cursor-default">
+                            <model-viewer src="adm.glb" auto-rotate auto-rotate-delay="0" rotation-per-second="20deg" interaction-prompt="none" shadow-intensity="1" class="w-12 h-12 lg:w-16 lg:h-16 lg:mb-3 mr-4 lg:mr-0 group-hover:-translate-y-2 transition-transform duration-300 bg-transparent"></model-viewer>
+                            <span class="text-sm lg:text-xs font-semibold text-[#5627e0] text-left lg:text-center leading-tight">Administração</span>
+                        </div>
+
+                        <!-- Ciano: Ciências Contábeis -->
+                        <div class="flex-1 flex flex-row lg:flex-col items-center justify-start lg:justify-center p-3 lg:p-4 rounded-2xl border border-[#40ccf7]/30 bg-[#40ccf7]/5 hover:bg-[#40ccf7]/20 transition-all duration-300 group cursor-default">
+                            <model-viewer src="contabeis.glb" auto-rotate auto-rotate-delay="0" rotation-per-second="20deg" interaction-prompt="none" shadow-intensity="1" class="w-12 h-12 lg:w-16 lg:h-16 lg:mb-3 mr-4 lg:mr-0 group-hover:-translate-y-2 transition-transform duration-300 bg-transparent"></model-viewer>
+                            <span class="text-sm lg:text-xs font-semibold text-[#40ccf7] text-left lg:text-center leading-tight">Ciências<br class="hidden lg:block"> Contábeis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Legacy & Arena -->
+    <section id="dinamica" class="py-24 relative overflow-hidden">
+        <!-- Decorator Background -->
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNHYtNGgtMnY0aC00djJoNHY0aDJ2LTRoNHYtMmgtNHptMC0zMFYwaC0ydjRoLTR2Mmg0djRoMnYtNGg0VjRoLTR6bS0yMCAwdjRINTJWNGgtNHYyaDR2NGgyViRoNHYtMmgtNHptMC0zMFYwaC0ydjRoLTR2Mmg0djRoMnYtNGg0VjRoLTR6bS0yMCAwdjRINzJWMmg0djRoMnYtNGg0VjJoLTR6IiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiLz48L2c+PC9zdmc+')]"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Dois palcos. Um <span class="text-gradient">legado.</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    Eventos criados para inspirar novos trabalhos, aproximar alunos e dar visibilidade aos projetos dentro e fora da faculdade.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+                <!-- Legacy Card -->
+                <div class="glass p-8 md:p-12 rounded-[2rem] reveal relative overflow-hidden group hover:bg-white/5 hover:border-white/20 hover:-translate-y-2 transition-all duration-300">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-mkt-purple opacity-20 rounded-full blur-3xl group-hover:opacity-40 transition-opacity"></div>
+                    <div class="h-24 mb-8 flex items-end">
+                        <img src="LEGACY.svg" alt="MKT4 Legacy" class="h-full object-contain" onerror="this.src='https://placehold.co/300x100/111/fff?text=MKT4+LEGACY'">
+                    </div>
+                    <div class="inline-block px-4 py-1.5 rounded-full bg-mkt-purple/20 text-mkt-purple text-xs font-bold tracking-wider uppercase mb-6 border border-mkt-purple/30">
+                        22 de Outubro
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">A história como inspiração</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm">
+                        Ex-alunos que se destacaram em semestres anteriores retornam ao palco. Um momento imersivo para reapresentar grandes cases e compartilhar como a experiência do MKT4 marcou e transformou suas carreiras profissionais.
+                    </p>
+                </div>
+
+                <!-- Arena Card -->
+                <div class="glass p-8 md:p-12 rounded-[2rem] reveal relative overflow-hidden group hover:bg-white/5 hover:border-white/20 hover:-translate-y-2 transition-all duration-300" style="transition-delay: 200ms;">
+                    <div class="absolute top-0 left-0 w-32 h-32 bg-mkt-orange opacity-20 rounded-full blur-3xl group-hover:opacity-40 transition-opacity"></div>
+                    <div class="h-24 mb-8 flex items-end">
+                        <img src="ARENA.svg" alt="MKT4 Arena" class="h-full object-contain" onerror="this.src='https://placehold.co/300x100/111/fff?text=MKT4+ARENA'">
+                    </div>
+                    <div class="inline-block px-4 py-1.5 rounded-full bg-mkt-orange/20 text-mkt-orange text-xs font-bold tracking-wider uppercase mb-6 border border-mkt-orange/30">
+                        09, 10, 11 e 13 de Novembro
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Construindo o Futuro</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm">
+                        A etapa oficial de competição. Quatro noites consecutivas no auditório principal destinadas à apresentação final dos trabalhos de planejamento estratégico desenvolvidos meticulosamente ao longo de todo o semestre.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3.5: Galeria Visual -->
+    <section class="py-24 relative overflow-hidden bg-black/30 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Um ambiente de <span class="text-gradient">imersão total</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    Estrutura de ponta projetada para dar vida a grandes ideias e conectar marcas, talentos e o mercado.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 reveal" style="transition-delay: 200ms;">
+                <!-- Imagem 1: Auditório -->
+                <div class="rounded-3xl overflow-hidden glass border border-white/10 group aspect-video relative shadow-2xl">
+                    <img src="IMG_9475 2.PNG" alt="Estrutura do palco MKT4" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='https://placehold.co/800x600/111/fff?text=Auditório+MKT4'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        <span class="text-white font-medium tracking-wide text-lg">O Palco Principal</span>
+                    </div>
+                </div>
+                <!-- Imagem 2: Letreiro 3D -->
+                <div class="rounded-3xl overflow-hidden glass border border-white/10 group aspect-video relative shadow-2xl" style="transition-delay: 300ms;">
+                    <img src="3BB21DDF-8461-4611-B9C6-654EA8033FB0.PNG" alt="Letreiro MKT4" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='https://placehold.co/800x600/111/fff?text=Letreiro+MKT4'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        <span class="text-white font-medium tracking-wide text-lg">Experiência Imersiva</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Números e Alcance -->
+    <section id="numeros" class="py-24 bg-gradient-to-b from-black/0 via-mkt-purple/5 to-black/0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="reveal">
+                    <h2 class="text-3xl md:text-4xl font-display font-bold mb-6">Sua marca no <br><span class="text-gradient">centro do espetáculo.</span></h2>
+                    <p class="text-gray-400 text-lg mb-6 leading-relaxed">
+                        Um evento desenhado estrategicamente para gerar <strong>alcance de marca real</strong>. Muito além do público físico presente no auditório, a exposição da sua empresa não se limita aos dias de apresentação.
+                    </p>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        A promoção e conexão com o público começam muito antes do grande dia e acontecem ao longo de <strong>todo o semestre</strong>, maximizando os pontos de contato e construindo autoridade.
+                    </p>
+                </div>
+                
+                <div class="grid sm:grid-cols-2 gap-6">
+                    <div class="glass p-8 rounded-2xl text-center reveal border-t-2 border-t-mkt-orange">
+                        <div class="text-4xl md:text-5xl font-display font-bold text-white mb-2 counter" data-target="4500">0</div>
+                        <div class="text-mkt-orange font-bold text-sm uppercase tracking-wider mb-2">Pessoas Impactadas</div>
+                        <p class="text-xs text-gray-500">Estudantes expostos à marca por toda a faculdade durante a semana do evento.</p>
+                    </div>
+                    
+                    <div class="glass p-8 rounded-2xl text-center reveal border-t-2 border-t-mkt-blue" style="transition-delay: 150ms;">
+                        <div class="text-4xl md:text-5xl font-display font-bold text-white mb-2 counter" data-target="6">0</div>
+                        <div class="text-mkt-blue font-bold text-sm uppercase tracking-wider mb-2">Pontos de Contato</div>
+                        <p class="text-xs text-gray-500">Exposição da marca em televisores espalhados, corredores e no Datashow.</p>
+                    </div>
+
+                    <div class="glass p-8 rounded-2xl text-center reveal border-t-2 border-t-mkt-purple" style="transition-delay: 300ms;">
+                        <div class="flex items-center justify-center text-4xl md:text-5xl font-display font-bold text-white mb-2">
+                            <span class="counter" data-target="11">0</span>K+
+                        </div>
+                        <div class="text-mkt-purple font-bold text-sm uppercase tracking-wider mb-2">Seguidores no Instagram</div>
+                        <p class="text-xs text-gray-500">Cobertura massiva e postagens no Feed, Stories e Reels da instituição.</p>
+                    </div>
+                    
+                    <div class="glass p-8 rounded-2xl text-center reveal border-t-2 border-t-mkt-red" style="transition-delay: 450ms;">
+                        <div class="text-4xl md:text-5xl font-display font-bold text-white mb-2 counter" data-target="500">0</div>
+                        <div class="text-mkt-red font-bold text-sm uppercase tracking-wider mb-2">Pessoas no Auditório</div>
+                        <p class="text-xs text-gray-500">Capacidade máxima alcançada nos 5 dias (Legacy + Arena) no palco principal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Patrocínio -->
+    <section id="patrocinio" class="py-24 relative z-10 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">Como sua marca pode <span class="text-white border-b-4 border-mkt-red">participar</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    Um projeto pensado para durar ano após ano. Oferecemos sugestões de contribuição flexíveis para alinhar os objetivos da sua empresa ao impacto do nosso evento.
+                </p>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                
+                <!-- Card 1 -->
+                <div class="glass p-6 rounded-2xl reveal group hover:bg-white/5 hover:border-white/20 hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-mkt-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3">Presença Qualificada</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Participação institucional. Sua marca presente como parceira oficial, gerando credibilidade e visibilidade premium de alto nível.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass p-6 rounded-2xl reveal group hover:bg-white/5 hover:border-white/20 hover:-translate-y-2 transition-all duration-300" style="transition-delay: 100ms;">
+                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-mkt-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3">Estrutura e Produção</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Apoio material estratégico: subsídio de espaços, ambientação criativa, cobertura audiovisual e materiais oficiais do evento.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass p-6 rounded-2xl reveal group hover:bg-white/5 hover:border-white/20 hover:-translate-y-2 transition-all duration-300" style="transition-delay: 200ms;">
+                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-mkt-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3">Ativações de Marca</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Conecte-se com a audiência promovendo experiências diretas, stands, amostras e ações vividas intensamente pelo público.
+                    </p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="glass p-6 rounded-2xl reveal group hover:bg-white/5 hover:border-white/20 hover:-translate-y-2 transition-all duration-300" style="transition-delay: 300ms;">
+                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-mkt-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3">Apoio Financeiro</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Seja o motor do evento. Verba direta destinada para custear a estrutura magna ou produtos para compor a premiação dos vencedores.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Retorno / Deliverables -->
+            <div class="glass p-8 rounded-3xl reveal bg-gradient-to-r from-white/5 to-white/0 border border-l-4 border-l-mkt-purple">
+                <h3 class="text-xl font-bold mb-6">O que sua marca recebe ao apoiar?</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-mkt-purple mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <p class="ml-3 text-sm text-gray-300"><strong>Momento de Fala:</strong> Espaço e tempo de fala reservados para a sua marca no palco oficial.</p>
+                    </div>
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-mkt-purple mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <p class="ml-3 text-sm text-gray-300"><strong>Agradecimento Especial:</strong> Menções honrosas e agradecimentos dedicados nas redes e durante as apresentações.</p>
+                    </div>
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-mkt-purple mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <p class="ml-3 text-sm text-gray-300"><strong>Exposição Multitelas:</strong> Sua marca exibida em todas as televisões espalhadas pela instituição.</p>
+                    </div>
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-mkt-purple mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <p class="ml-3 text-sm text-gray-300"><strong>Site Oficial:</strong> Marca listada oficialmente e de forma permanente na categoria de patrocinadores na página do evento.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Conversão e Equipe -->
+    <footer class="pt-24 pb-6 relative overflow-hidden text-center border-t border-white/10">
+        <!-- Background mesh/gradient -->
+        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-[500px] bg-gradient-mkt opacity-10 blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-4xl mx-auto px-4 relative z-10 reveal mb-20">
+            <h2 class="text-3xl md:text-5xl font-display font-bold mb-6">Pronto para deixar a sua marca no legado?</h2>
+            <p class="text-gray-400 mb-12 text-lg">Conecte sua empresa à inovação, criatividade e ao futuro do marketing.</p>
+            
+            <!-- Interactive '4' Button -->
+            <a href="https://wa.me/5534984133148?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20patrocinar%20o%20evento%20MKT4" target="_blank" class="inline-block group cursor-pointer">
+                <div class="relative w-32 h-32 md:w-48 md:h-48 mx-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                    <img src="4.svg" alt="Clique no 4" class="w-full h-full object-contain drop-shadow-[0_0_25px_rgba(239,68,68,0.5)]" onerror="this.src='https://placehold.co/200x200/ef4444/fff?text=4'">
+                    
+                    <!-- Pulse rings on hover -->
+                    <div class="absolute inset-0 rounded-full border-2 border-mkt-orange opacity-0 group-hover:animate-ping"></div>
+                </div>
+                <div class="mt-8 px-6 py-2 rounded-full bg-white/5 border border-white/10 inline-flex items-center space-x-2 group-hover:bg-white/10 transition-colors">
+                    <span class="text-sm font-bold uppercase tracking-widest bg-gradient-mkt -webkit-background-clip-text text-transparent bg-clip-text group-hover:text-white transition-colors">
+                        Clique no "4" para entrar em contato
+                    </span>
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </div>
+            </a>
+        </div>
+
+        <!-- Team Credits Area (Subtle/Low profile) -->
+        <div class="max-w-7xl mx-auto px-4 mt-20 pt-10 border-t border-white/5 text-left relative z-10 reveal opacity-70 hover:opacity-100 transition-opacity duration-500">
+            <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-8 font-bold text-center">A Equipe por trás do MKT4</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 text-[11px] text-gray-500">
+                <!-- Coordenação Geral -->
+                <div>
+                    <h4 class="text-gray-300 font-semibold mb-3 uppercase tracking-wider text-[10px]">Coordenação Geral</h4>
+                    <ul class="space-y-1.5">
+                        <li class="font-medium text-gray-400">Prof. Isley Borges da Silva Junior</li>
+                        <li class="font-medium text-gray-400">Prof. Karina Liotti</li>
+                        <li class="font-medium text-gray-400">Prof. Isabela Paiva Novaes</li>
+                        <li class="font-medium text-gray-400">João Vitor Teixeira Alves Filho</li>
+                    </ul>
+                </div>
+                
+                <!-- Cerimonial -->
+                <div>
+                    <h4 class="text-gray-300 font-semibold mb-3 uppercase tracking-wider text-[10px]">Cerimonial</h4>
+                    <ul class="space-y-1.5">
+                        <li class="font-medium text-gray-400">Arthur Martins Gomes</li>
+                        <li class="font-medium text-gray-400">Pedro Henrique Moraes Rodrigues</li>
+                    </ul>
+                </div>
+
+                <!-- Planejamento -->
+                <div>
+                    <h4 class="text-gray-300 font-semibold mb-3 uppercase tracking-wider text-[10px]">Planejamento</h4>
+                    <ul class="space-y-1.5">
+                        <li class="font-medium text-gray-400">Kayky Galtaroça Borges (Coord.)</li>
+                        <li class="font-medium text-gray-400">Mariane Ana Costa da Silva (Coord. Demandas)</li>
+                        <li>Ana Júlia Nascimento Rodrigues</li>
+                        <li>Anna Luisa Morais Vieira</li>
+                        <li>Clara Faria Tostes</li>
+                        <li>Eduardo Barbosa Gomes</li>
+                        <li>Fabiana Amaral</li>
+                        <li>Felipe Oliveira Sousa</li>
+                        <li>Isabela Cavalli Theodoro</li>
+                        <li>Jordana Freitas Veloso</li>
+                        <li>Karen Alves Rocha</li>
+                        <li>Laura Tannús</li>
+                        <li>Malako</li>
+                        <li>Maria Eduarda Paulino Fernandes</li>
+                        <li>Maria Luiza Alves Ferreira</li>
+                        <li>Pedro Victor Silva Vilar</li>
+                        <li>Raquel Porfírio da Silva</li>
+                    </ul>
+                </div>
+
+                <!-- Comunicação -->
+                <div>
+                    <h4 class="text-gray-300 font-semibold mb-3 uppercase tracking-wider text-[10px]">Comunicação</h4>
+                    <ul class="space-y-1.5">
+                        <li class="font-medium text-gray-400">Elcimar Camilo de Castro Júnior (Coord.)</li>
+                        <li class="font-medium text-gray-400">Abgail Fernandes Dias (Coord. Divulgação)</li>
+                        <li class="font-medium text-gray-400">Luis Phelipe Mata Pimenta (Coord. Cobertura)</li>
+                        <li>Ágatha Cristina Pelicione Lima</li>
+                        <li>Amanda Inácio Gonçalves</li>
+                        <li>Ana Laura Parreira Moura Ramos</li>
+                        <li>Ana Laura Rodrigues de Faria</li>
+                        <li>Ana Luiza de Freitas Gomes</li>
+                        <li>Anna Beatriz Ferreira Santos</li>
+                        <li>Anna Júlia Nicomedes</li>
+                        <li>Beatriz Cristiny Gonzaga Machado</li>
+                        <li>Brenda Caroline Freitas</li>
+                        <li>Caroline Mirelle Bragança Duarte</li>
+                        <li>Eduardo Mariano de Souza</li>
+                        <li>Emilly Rebeca Sousa Nunes</li>
+                        <li>Giovana Castro Souza</li>
+                        <li>Giovanna Souza Ribeiro</li>
+                        <li>Hyasmin Santos</li>
+                        <li>Joyce Martins Luiz</li>
+                        <li>Luanny Beatriz Conceição Oliveira</li>
+                        <li>Lucas Rikelme da Silva Batista</li>
+                        <li>Maria Eduarda Duarte Dantas</li>
+                        <li>Mariah Vitoria de Oliveira Teixeira</li>
+                        <li>Nicole Reis</li>
+                        <li>Rafael Matos Ferreira</li>
+                        <li>Samara Parreira Soares</li>
+                        <li>Sofia Melazzo Bernardes</li>
+                        <li>Victor Hugo Alves Borges</li>
+                        <li>Vitória dos Santos Monteiro de Morais</li>
+                    </ul>
+                </div>
+
+                <!-- Execução -->
+                <div>
+                    <h4 class="text-gray-300 font-semibold mb-3 uppercase tracking-wider text-[10px]">Execução</h4>
+                    <ul class="space-y-1.5">
+                        <li class="font-medium text-gray-400">Isabela Ferreira Bueno Gouveia (Coord.)</li>
+                        <li>Ana Julia Gervasio Campos de Oliveira</li>
+                        <li>Ana Julia Rodrigues Vasconcelos</li>
+                        <li>Ana Luiza Lima de Freitas</li>
+                        <li>Ana Luiza Oliveira Moro</li>
+                        <li>Anna Luiza Andrade Naves</li>
+                        <li>Ariell Aguiar Colevati</li>
+                        <li>Arthur Fellype de Freitas Pinto</li>
+                        <li>Bárbara Cristina Alves Sagário</li>
+                        <li>Clara Esteves de Alcântara</li>
+                        <li>Gabriel Augusto Moura Magalhães</li>
+                        <li>Geovanna Smith de Oliveira Silva</li>
+                        <li>Geovanna Vitória Tavares Machado</li>
+                        <li>Júlia Silva Andrade</li>
+                        <li>Karen Steffani Calazans de Sousa</li>
+                        <li>Manuela Vieira Ochoa</li>
+                        <li>Maria Eduarda Estephanelli</li>
+                        <li>Mariana Fonseca Santos</li>
+                        <li>Sabryna Rodrigues Alves</li>
+                        <li>Yasmim Silva Borges</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-sm text-gray-600 relative z-10">
+            <p>&copy; 2026 MKT4 ESAMC Uberlândia. Todos os direitos reservados.</p>
+            <div class="flex space-x-6 mt-4 md:mt-0">
+                <a href="https://www.instagram.com/marketing4esamc" target="_blank" class="hover:text-gray-300 transition-colors">Instagram Oficial</a>
+                <a href="https://esamcuberlandia.com.br" target="_blank" class="hover:text-gray-300 transition-colors">ESAMC</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Fechar menu ao clicar em um link (melhora a experiência no celular)
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Navbar scroll effect (Glassmorphism solidifies slightly on scroll)
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.style.background = 'rgba(10, 10, 10, 0.8)';
+                navbar.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.5)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.03)';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+
+        // Scroll Reveal Animation with Intersection Observer
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Trigger on load
+
+        // Number Counter Animation for Mídia Kit
+        const counters = document.querySelectorAll('.counter');
+        const speed = 100; // lower is faster
+
+        const animateCounters = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const updateCount = () => {
+                        const target = +counter.getAttribute('data-target');
+                        const count = +counter.innerText;
+                        
+                        // Calculate increment logic
+                        const inc = target / speed;
+
+                        if (count < target) {
+                            counter.innerText = Math.ceil(count + inc);
+                            setTimeout(updateCount, 20);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+                    updateCount();
+                    // Stop observing once animated
+                    observer.unobserve(counter);
+                }
+            });
+        };
+
+        const counterObserver = new IntersectionObserver(animateCounters, {
+            threshold: 0.5
+        });
+
+        counters.forEach(counter => {
+            counterObserver.observe(counter);
+        });
+    </script>
+</body>
+</html>
